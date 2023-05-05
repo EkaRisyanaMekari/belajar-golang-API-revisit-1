@@ -33,8 +33,10 @@ func handleGetTodoById(c *gin.Context) {
 
 func handleUrlQuery(c *gin.Context) {
 	title := c.Query("title")
+	price := c.Query("price")
 	c.JSON(http.StatusOK, gin.H{
 		"title": title,
+		"price": price,
 	})
 }
 
