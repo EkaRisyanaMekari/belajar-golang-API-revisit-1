@@ -11,6 +11,7 @@ func main() {
 
 	router.GET("/", handleRoot)
 	router.GET("/todo/:id", handleGetTodoById)
+	router.GET("/todos", handleUrlQuery)
 
 	router.Run(":7878")
 }
@@ -26,5 +27,12 @@ func handleGetTodoById(c *gin.Context) {
 	id := c.Param("id")
 	c.JSON(http.StatusOK, gin.H{
 		"id": id,
+	})
+}
+
+func handleUrlQuery(c *gin.Context) {
+	title := c.Query("title")
+	c.JSON(http.StatusOK, gin.H{
+		"title": title,
 	})
 }
