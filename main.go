@@ -54,6 +54,7 @@ func handleMultiUrlParam(c *gin.Context) {
 type TodoInput struct {
 	Title       string
 	Description string
+	DueDate     string `json:"due_date"`
 }
 
 func handlePostTodo(c *gin.Context) {
@@ -65,8 +66,9 @@ func handlePostTodo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"title": todoInput.Title,
-		"desc":  todoInput.Description,
+		"title":    todoInput.Title,
+		"desc":     todoInput.Description,
+		"due_date": todoInput.DueDate,
 	})
 
 }
