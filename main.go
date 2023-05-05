@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ func main() {
 	router.GET("/todo/:id", handleGetTodoById)
 	router.GET("/todos", handleUrlQuery)
 	router.GET("/todos/:year/:month", handleMultiUrlParam)
+	router.POST("/todos", handlePostTodo)
 
 	router.Run(":7878")
 }
@@ -47,4 +49,24 @@ func handleMultiUrlParam(c *gin.Context) {
 		"year":  year,
 		"month": month,
 	})
+}
+
+type TodoInput struct {
+	Title       string
+	Description string
+}
+
+func handlePostTodo(c *gin.Context) {
+	var todoInput TodoInput
+
+	err := c.ShouldBindJSON(&todoInput)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"title": todoInput.Title,
+		"desc":  todoInput.Description,
+	})
+
 }
