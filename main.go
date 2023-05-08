@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -63,7 +64,12 @@ func handlePostTodo(c *gin.Context) {
 	err := c.ShouldBindJSON(&todoInput)
 	if err != nil {
 		fmt.Print(err)
-		c.JSON(http.StatusBadRequest, err)
+		errMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			msg := fmt.Sprintf("Error [field: %s], is: %s", e.Field(), e.ActualTag())
+			errMessages = append(errMessages, msg)
+		}
+		c.JSON(http.StatusBadRequest, errMessages)
 		return
 	}
 
