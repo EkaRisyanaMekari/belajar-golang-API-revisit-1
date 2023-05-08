@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -52,8 +52,8 @@ func handleMultiUrlParam(c *gin.Context) {
 }
 
 type TodoInput struct {
-	Title       string
-	Description string
+	Title       string `binding:"required"`
+	Description string `binding:"required"`
 	DueDate     string `json:"due_date"`
 }
 
@@ -62,7 +62,9 @@ func handlePostTodo(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&todoInput)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err)
+		c.JSON(http.StatusBadRequest, err)
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
