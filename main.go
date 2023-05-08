@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -63,11 +65,17 @@ func handlePostTodo(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&todoInput)
 	if err != nil {
+		var jsonError *json.UnmarshalTypeError
 		fmt.Print(err)
 		errMessages := []string{}
-		for _, e := range err.(validator.ValidationErrors) {
-			msg := fmt.Sprintf("Error [field: %s], is: %s", e.Field(), e.ActualTag())
+		if errors.As(err, &jsonError) {
+			msg := fmt.Sprintf("Error [field: %s], actual type: %s", err.(*json.UnmarshalTypeError).Field, err.(*json.UnmarshalTypeError).Value)
 			errMessages = append(errMessages, msg)
+		} else {
+			for _, e := range err.(validator.ValidationErrors) {
+				msg := fmt.Sprintf("Error [field: %s], is: %s", e.Field(), e.ActualTag())
+				errMessages = append(errMessages, msg)
+			}
 		}
 		c.JSON(http.StatusBadRequest, errMessages)
 		return
