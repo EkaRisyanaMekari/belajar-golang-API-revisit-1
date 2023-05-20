@@ -57,7 +57,8 @@ func handleMultiUrlParam(c *gin.Context) {
 type TodoInput struct {
 	Title       string `binding:"required"`
 	Description string `binding:"required"`
-	DueDate     string `json:"due_date"`
+	DueDate     string `binding:"required" json:"due_date"`
+	Price       int32  `binding:"required,number"`
 }
 
 func handlePostTodo(c *gin.Context) {
@@ -85,6 +86,7 @@ func handlePostTodo(c *gin.Context) {
 		"title":    todoInput.Title,
 		"desc":     todoInput.Description,
 		"due_date": todoInput.DueDate,
+		"price":    todoInput.Price,
 	})
 
 }
