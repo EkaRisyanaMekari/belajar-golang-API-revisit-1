@@ -13,11 +13,13 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.GET("/", handleRoot)
-	router.GET("/todo/:id", handleGetTodoById)
-	router.GET("/todos", handleUrlQuery)
-	router.GET("/todos/:year/:month", handleMultiUrlParam)
-	router.POST("/todos", handlePostTodo)
+	v1 := router.Group("/v1")
+
+	v1.GET("/", handleRoot)
+	v1.GET("/todo/:id", handleGetTodoById)
+	v1.GET("/todos", handleUrlQuery)
+	v1.GET("/todos/:year/:month", handleMultiUrlParam)
+	v1.POST("/todos", handlePostTodo)
 
 	router.Run(":7878")
 }
