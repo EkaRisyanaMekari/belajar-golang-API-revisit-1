@@ -4,13 +4,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"belajar-golang-api-revisit-1/todo"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
+
+var Db *gorm.DB
 
 func HandleRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
@@ -65,11 +69,19 @@ func HandlePostTodo(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"title":    todoInput.Title,
-		"desc":     todoInput.Description,
-		"due_date": todoInput.DueDate,
-		"price":    todoInput.Price,
-	})
+	newTodo := todo.Todo{}
+	newTodo.Title = todoInput.Title
+	newTodo.Description = todoInput.Description
+	newTodo.DueDate = todoInput.DueDate
+	newTodo.Status = 0
+
+	err = Db.Create(&newTodo).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		fmt.Println(err)
+		log.Fatal("Error create record")
+	}
+
+	c.JSON(http.StatusOK, newTodo)
 
 }

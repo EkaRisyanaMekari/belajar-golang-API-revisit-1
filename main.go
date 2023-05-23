@@ -23,6 +23,8 @@ func main() {
 	// DB migrattion
 	db.AutoMigrate(&todo.Todo{})
 
+	handler.Db = db
+
 	router := gin.Default()
 
 	v1 := router.Group("/v1")
