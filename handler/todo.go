@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"belajar-golang-api-revisit-1/todo"
 
@@ -92,5 +93,23 @@ func HandleGetTodoById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"data": todo,
+	})
+}
+
+func HandleGetTodoBySearch(c *gin.Context) {
+	keyword := c.Query("keyword")
+
+	if keyword == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "Please specify keyword",
+		})
+		return
+	}
+
+	var todos []todo.Todo
+	conditions := []string{"%", keyword, "%"}
+	Db.Where("description like ?", strings.Join(conditions, "")).Find(&todos)
+	c.JSON(http.StatusOK, gin.H{
+		"data": todos,
 	})
 }

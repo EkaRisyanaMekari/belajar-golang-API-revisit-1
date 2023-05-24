@@ -33,6 +33,7 @@ func main() {
 	v1.POST("/todos", handler.HandlePostTodo)
 	v1.GET("/todos", handler.HandleGetTodosByStatus)
 	v1.GET("/todos/:id", handler.HandleGetTodoById)
+	v1.GET("/todos/search", handler.HandleGetTodoBySearch)
 
 	router.Run(":7878")
 }
