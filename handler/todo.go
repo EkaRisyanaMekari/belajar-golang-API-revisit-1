@@ -23,22 +23,6 @@ func HandleRoot(c *gin.Context) {
 	})
 }
 
-func HandleGetTodoById(c *gin.Context) {
-	id := c.Param("id")
-	c.JSON(http.StatusOK, gin.H{
-		"id": id,
-	})
-}
-
-func HandleMultiUrlParam(c *gin.Context) {
-	year := c.Param("year")
-	month := c.Param("month")
-	c.JSON(http.StatusOK, gin.H{
-		"year":  year,
-		"month": month,
-	})
-}
-
 func HandlePostTodo(c *gin.Context) {
 	var todoInput todo.TodoInput
 
@@ -93,4 +77,20 @@ func HandleGetTodosByStatus(c *gin.Context) {
 		"data": todos,
 	})
 
+}
+
+func HandleGetTodoById(c *gin.Context) {
+	id := c.Param("id")
+
+	var todo todo.Todo
+	result := Db.First(&todo, id)
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"data": "Not found",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": todo,
+	})
 }
