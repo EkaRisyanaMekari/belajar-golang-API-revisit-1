@@ -30,15 +30,6 @@ func HandleGetTodoById(c *gin.Context) {
 	})
 }
 
-func HandleUrlQuery(c *gin.Context) {
-	title := c.Query("title")
-	price := c.Query("price")
-	c.JSON(http.StatusOK, gin.H{
-		"title": title,
-		"price": price,
-	})
-}
-
 func HandleMultiUrlParam(c *gin.Context) {
 	year := c.Param("year")
 	month := c.Param("month")
@@ -83,5 +74,23 @@ func HandlePostTodo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, newTodo)
+
+}
+
+func HandleGetTodosByStatus(c *gin.Context) {
+	status := c.Query("status")
+
+	if status == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "Please specify status",
+		})
+		return
+	}
+
+	var todos []todo.Todo
+	Db.Find(&todos, "status = ?", status)
+	c.JSON(http.StatusOK, gin.H{
+		"data": todos,
+	})
 
 }

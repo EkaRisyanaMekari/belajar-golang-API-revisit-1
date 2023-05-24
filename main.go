@@ -31,9 +31,9 @@ func main() {
 
 	v1.GET("/", handler.HandleRoot)
 	v1.GET("/todo/:id", handler.HandleGetTodoById)
-	v1.GET("/todos", handler.HandleUrlQuery)
 	v1.GET("/todos/:year/:month", handler.HandleMultiUrlParam)
 	v1.POST("/todos", handler.HandlePostTodo)
+	v1.GET("/todos", handler.HandleGetTodosByStatus)
 
 	router.Run(":7878")
 }
