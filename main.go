@@ -34,6 +34,7 @@ func main() {
 	v1.PUT("/todos", handler.HandleUpdateTodo)
 	v1.GET("/todos", handler.HandleGetTodosByStatus)
 	v1.GET("/todos/:id", handler.HandleGetTodoById)
+	v1.DELETE("/todos/:id", handler.HandleDeleteTodoById)
 	v1.GET("/todos/search", handler.HandleGetTodoBySearch)
 
 	router.Run(":7878")

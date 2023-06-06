@@ -158,3 +158,29 @@ func HandleGetTodoBySearch(c *gin.Context) {
 		"data": todos,
 	})
 }
+
+func HandleDeleteTodoById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	var deletedTodo = todo.Todo{}
+	result := Db.First(&deletedTodo, id)
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"data": "Not found",
+		})
+		return
+	}
+
+	err = Db.Delete(&deletedTodo).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Deleted": deletedTodo,
+	})
+}
