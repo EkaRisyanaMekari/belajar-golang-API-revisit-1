@@ -96,7 +96,7 @@ func HandleUpdateTodo(c *gin.Context) {
 	updatedTodo.DueDate = todoInput.DueDate
 	updatedTodo.ID = id
 
-	err = Db.Save(&updatedTodo).Error
+	err = Db.Model(&updatedTodo).Select("Title", "Description", "DueDate").Updates(updatedTodo).Error
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		fmt.Println(err)

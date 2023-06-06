@@ -8,6 +8,6 @@ type Todo struct {
 	Description string
 	DueDate     time.Time
 	Status      int8
-	CreatedAt   time.Time
+	CreatedAt   time.Time `gorm:"<-:create"`
 	UpdatedAt   time.Time
 }
