@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"belajar-golang-api-revisit-1/todo"
@@ -59,6 +60,50 @@ func HandlePostTodo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, newTodo)
+
+}
+
+func HandleUpdateTodo(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	var todoInput todo.TodoInput
+
+	err = c.ShouldBindJSON(&todoInput)
+	if err != nil {
+		var jsonError *json.UnmarshalTypeError
+		fmt.Print(err)
+		errMessages := []string{}
+		if errors.As(err, &jsonError) {
+			msg := fmt.Sprintf("Error [field: %s], actual type: %s", err.(*json.UnmarshalTypeError).Field, err.(*json.UnmarshalTypeError).Value)
+			errMessages = append(errMessages, msg)
+		} else {
+			for _, e := range err.(validator.ValidationErrors) {
+				msg := fmt.Sprintf("Error [field: %s], is: %s", e.Field(), e.ActualTag())
+				errMessages = append(errMessages, msg)
+			}
+		}
+		c.JSON(http.StatusBadRequest, errMessages)
+		return
+	}
+
+	updatedTodo := todo.Todo{}
+	updatedTodo.Title = todoInput.Title
+	updatedTodo.Description = todoInput.Description
+	updatedTodo.DueDate = todoInput.DueDate
+	updatedTodo.ID = id
+
+	err = Db.Save(&updatedTodo).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		fmt.Println(err)
+		log.Fatal("Error update record")
+	}
+
+	c.JSON(http.StatusOK, updatedTodo)
 
 }
 
