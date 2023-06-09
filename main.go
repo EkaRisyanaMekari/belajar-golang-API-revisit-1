@@ -33,6 +33,7 @@ func main() {
 
 	v1.GET("/", handler.HandleRoot)
 	v1.POST("/signup", handler.Signup)
+	v1.POST("/signin", handler.Signin)
 	v1.POST("/todos", handler.HandlePostTodo)
 	v1.PUT("/todos", handler.HandleUpdateTodo)
 	v1.GET("/todos", handler.HandleGetTodosByStatus)

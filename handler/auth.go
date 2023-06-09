@@ -53,3 +53,48 @@ func Signup(c *gin.Context) {
 	})
 
 }
+
+func Signin(c *gin.Context) {
+	// read body
+	type Body struct {
+		Email    string
+		Password string
+	}
+
+	var body Body
+	err := c.Bind(&body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "failed read body",
+		})
+		return
+	}
+
+	// check email
+	var user user.User
+	result := Db.Where(&Body{Email: body.Email}).First(&user)
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
+		return
+	}
+
+	// check password
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
+		return
+	}
+
+	// create token
+
+	// set cookie
+
+	// respond with token
+	c.JSON(http.StatusOK, gin.H{
+		"token": "success signin",
+	})
+}
