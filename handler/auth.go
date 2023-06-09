@@ -3,8 +3,10 @@ package handler
 import (
 	"belajar-golang-api-revisit-1/user"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -90,11 +92,28 @@ func Signin(c *gin.Context) {
 	}
 
 	// create token
+	key := []byte("adfadfadf")
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"sub": user.Email,
+			"exp": time.Now().Add(time.Hour * 24).Unix(), // add 24 hours
+		},
+	)
+	tokenString, err := token.SignedString(key)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed create token",
+		})
+		return
+	}
 
 	// set cookie
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("token", tokenString, 3600*24, "", "", false, true)
 
 	// respond with token
 	c.JSON(http.StatusOK, gin.H{
-		"token": "success signin",
+		"token": tokenString,
 	})
 }
