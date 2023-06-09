@@ -3,6 +3,7 @@ package main
 import (
 	"belajar-golang-api-revisit-1/handler"
 	"belajar-golang-api-revisit-1/todo"
+	"belajar-golang-api-revisit-1/user"
 	"fmt"
 	"log"
 
@@ -22,6 +23,7 @@ func main() {
 
 	// DB migrattion
 	db.AutoMigrate(&todo.Todo{})
+	db.AutoMigrate(&user.User{})
 
 	handler.Db = db
 
@@ -30,6 +32,7 @@ func main() {
 	v1 := router.Group("/v1")
 
 	v1.GET("/", handler.HandleRoot)
+	v1.POST("/signup", handler.Signup)
 	v1.POST("/todos", handler.HandlePostTodo)
 	v1.PUT("/todos", handler.HandleUpdateTodo)
 	v1.GET("/todos", handler.HandleGetTodosByStatus)
