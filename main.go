@@ -2,6 +2,7 @@ package main
 
 import (
 	"belajar-golang-api-revisit-1/handler"
+	"belajar-golang-api-revisit-1/middleware"
 	"belajar-golang-api-revisit-1/todo"
 	"belajar-golang-api-revisit-1/user"
 	"fmt"
@@ -31,15 +32,15 @@ func main() {
 
 	v1 := router.Group("/v1")
 
-	v1.GET("/", handler.HandleRoot)
+	v1.GET("/", middleware.RequireAuth, handler.HandleRoot)
 	v1.POST("/signup", handler.Signup)
 	v1.POST("/signin", handler.Signin)
-	v1.POST("/todos", handler.HandlePostTodo)
-	v1.PUT("/todos", handler.HandleUpdateTodo)
-	v1.GET("/todos", handler.HandleGetTodosByStatus)
-	v1.GET("/todos/:id", handler.HandleGetTodoById)
-	v1.DELETE("/todos/:id", handler.HandleDeleteTodoById)
-	v1.GET("/todos/search", handler.HandleGetTodoBySearch)
+	v1.POST("/todos", middleware.RequireAuth, handler.HandlePostTodo)
+	v1.PUT("/todos", middleware.RequireAuth, handler.HandleUpdateTodo)
+	v1.GET("/todos", middleware.RequireAuth, handler.HandleGetTodosByStatus)
+	v1.GET("/todos/:id", middleware.RequireAuth, handler.HandleGetTodoById)
+	v1.DELETE("/todos/:id", middleware.RequireAuth, handler.HandleDeleteTodoById)
+	v1.GET("/todos/search", middleware.RequireAuth, handler.HandleGetTodoBySearch)
 
 	router.Run(":7878")
 }
