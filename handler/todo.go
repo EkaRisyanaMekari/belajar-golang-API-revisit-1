@@ -127,6 +127,7 @@ func HandleGetTodosByStatus(c *gin.Context) {
 }
 
 func HandleGetTodoById(c *gin.Context) {
+	userSigned, _ := c.MustGet("user").(user.User)
 	id := c.Param("id")
 
 	var todo todo.Todo
@@ -134,6 +135,13 @@ func HandleGetTodoById(c *gin.Context) {
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"data": "Not found",
+		})
+		return
+	}
+
+	if todo.UserId != int(userSigned.ID) {
+		c.JSON(http.StatusForbidden, gin.H{
+			"data": "Forbidden to get this data",
 		})
 		return
 	}
