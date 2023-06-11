@@ -151,6 +151,7 @@ func HandleGetTodoById(c *gin.Context) {
 }
 
 func HandleGetTodoBySearch(c *gin.Context) {
+	userSigned, _ := c.MustGet("user").(user.User)
 	keyword := c.Query("keyword")
 
 	if keyword == "" {
@@ -162,7 +163,7 @@ func HandleGetTodoBySearch(c *gin.Context) {
 
 	var todos []todo.Todo
 	conditions := []string{"%", keyword, "%"}
-	Db.Where("description like ?", strings.Join(conditions, "")).Find(&todos)
+	Db.Where("description like ?", strings.Join(conditions, "")).Where(&todo.Todo{UserId: int(userSigned.ID)}).Find(&todos)
 	c.JSON(http.StatusOK, gin.H{
 		"data": todos,
 	})
