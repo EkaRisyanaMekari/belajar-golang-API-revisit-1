@@ -67,9 +67,18 @@ func HandlePostTodo(c *gin.Context) {
 }
 
 func HandleUpdateTodo(c *gin.Context) {
+	userSigned := c.MustGet("user").(user.User)
+
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	if id != int(userSigned.ID) {
+		c.JSON(http.StatusForbidden, gin.H{
+			"data": "Forbidden to conduct this action",
+		})
 		return
 	}
 
