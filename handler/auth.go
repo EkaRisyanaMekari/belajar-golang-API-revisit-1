@@ -3,6 +3,7 @@ package handler
 import (
 	"belajar-golang-api-revisit-1/user"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -92,7 +93,7 @@ func Signin(c *gin.Context) {
 	}
 
 	// create token
-	key := []byte("adfadfadf")
+	key := []byte(os.Getenv("SECRET_JWT"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"sub": user.Email,

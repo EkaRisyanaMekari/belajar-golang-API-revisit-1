@@ -5,6 +5,7 @@ import (
 	"belajar-golang-api-revisit-1/user"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,7 @@ func RequireAuth(c *gin.Context) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		key := []byte("adfadfadf")
+		key := []byte(os.Getenv("SECRET_JWT"))
 
 		return key, nil
 	})
