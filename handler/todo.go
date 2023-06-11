@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"belajar-golang-api-revisit-1/todo"
+	"belajar-golang-api-revisit-1/user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -26,6 +27,7 @@ func HandleRoot(c *gin.Context) {
 }
 
 func HandlePostTodo(c *gin.Context) {
+	userSigned := c.MustGet("user").(user.User)
 	var todoInput todo.TodoInput
 
 	err := c.ShouldBindJSON(&todoInput)
@@ -51,6 +53,7 @@ func HandlePostTodo(c *gin.Context) {
 	newTodo.Description = todoInput.Description
 	newTodo.DueDate = todoInput.DueDate
 	newTodo.Status = 0
+	newTodo.UserId = int(userSigned.ID)
 
 	err = Db.Create(&newTodo).Error
 	if err != nil {
@@ -108,17 +111,15 @@ func HandleUpdateTodo(c *gin.Context) {
 }
 
 func HandleGetTodosByStatus(c *gin.Context) {
+	userSigned, _ := c.MustGet("user").(user.User)
 	status := c.Query("status")
 
-	if status == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Error": "Please specify status",
-		})
-		return
-	}
-
 	var todos []todo.Todo
-	Db.Find(&todos, "status = ?", status)
+	if status == "" {
+		Db.Where(&todo.Todo{UserId: int(userSigned.ID)}).Find(&todos)
+	} else {
+		Db.Where(&todo.Todo{UserId: int(userSigned.ID)}).Find(&todos, "status = ?", status)
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"data": todos,
 	})

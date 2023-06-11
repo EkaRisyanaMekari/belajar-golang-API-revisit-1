@@ -10,4 +10,5 @@ type Todo struct {
 	Status      int8
 	CreatedAt   time.Time `gorm:"<-:create"`
 	UpdatedAt   time.Time
+	UserId      int
 }
