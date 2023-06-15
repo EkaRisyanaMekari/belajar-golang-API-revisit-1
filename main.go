@@ -18,7 +18,8 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error load env")
+		fmt.Println("Error load env")
+		fmt.Println(err)
 	}
 	dsn := os.Getenv("DATABASE")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
