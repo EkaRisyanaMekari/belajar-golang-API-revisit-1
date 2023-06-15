@@ -21,8 +21,8 @@ var Db *gorm.DB
 
 func HandleRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"name":    "Eka",
-		"address": "Bandung x",
+		"name":    "Hello World",
+		"address": "Bandung",
 	})
 }
 

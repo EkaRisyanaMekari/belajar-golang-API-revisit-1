@@ -39,7 +39,7 @@ func main() {
 
 	v1 := router.Group("/v1")
 
-	v1.GET("/", middleware.RequireAuth, handler.HandleRoot)
+	router.GET("/", handler.HandleRoot)
 	v1.POST("/signup", handler.Signup)
 	v1.POST("/signin", handler.Signin)
 	v1.POST("/todos", middleware.RequireAuth, handler.HandlePostTodo)
