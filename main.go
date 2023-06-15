@@ -49,5 +49,5 @@ func main() {
 	v1.DELETE("/todos/:id", middleware.RequireAuth, handler.HandleDeleteTodoById)
 	v1.GET("/todos/search", middleware.RequireAuth, handler.HandleGetTodoBySearch)
 
-	router.Run(":7878")
+	router.Run(os.Getenv("PORT"))
 }
