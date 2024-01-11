@@ -44,6 +44,7 @@ func main() {
 	v1.POST("/signin", handler.Signin)
 	v1.POST("/todos", middleware.RequireAuth, handler.HandlePostTodo)
 	v1.PUT("/todos", middleware.RequireAuth, handler.HandleUpdateTodo)
+	v1.PUT("/todos/update-status", middleware.RequireAuth, handler.HandleUpdateTodoStatus)
 	v1.GET("/todos", middleware.RequireAuth, handler.HandleGetTodosByStatus)
 	v1.GET("/todos/:id", middleware.RequireAuth, handler.HandleGetTodoById)
 	v1.DELETE("/todos/:id", middleware.RequireAuth, handler.HandleDeleteTodoById)

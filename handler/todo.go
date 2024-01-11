@@ -227,3 +227,48 @@ func HandleDeleteTodoById(c *gin.Context) {
 		"Deleted": deletedTodo,
 	})
 }
+
+func HandleUpdateTodoStatus(c *gin.Context) {
+	userSigned := c.MustGet("user").(user.User)
+	id, err := strconv.Atoi(c.Query("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	updatedTodo := todo.Todo{}
+
+	result := Db.Where(&todo.Todo{ID: int(id), UserId: int(userSigned.ID)}).Find(&updatedTodo)
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"data": "No data updated",
+		})
+		return
+	}
+
+	todoStatus := todo.TodoStatus{}
+	errorBind := c.ShouldBindJSON(&todoStatus)
+
+	if errorBind != nil {
+		c.JSON(http.StatusBadRequest, errorBind)
+		return
+	}
+
+	updatedTodo.Status = todoStatus.Status
+
+	errorUpdate := Db.Model(&updatedTodo).Select("Status").Updates(updatedTodo).Error
+
+	if errorUpdate != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"data": "Error when update status",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": "Success update status",
+	})
+
+}
