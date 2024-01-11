@@ -198,18 +198,22 @@ func HandleDeleteTodoById(c *gin.Context) {
 		return
 	}
 
-	if id != int(userSigned.ID) {
-		c.JSON(http.StatusForbidden, gin.H{
-			"data": "Forbidden to conduct this action",
+	var deletedTodo = todo.Todo{}
+
+	result := Db.Where(&todo.Todo{ID: int(id)}).Find(&deletedTodo)
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"data": "Not found",
 		})
 		return
 	}
 
-	var deletedTodo = todo.Todo{}
-	result := Db.First(&deletedTodo, id)
+	result = Db.Where(&todo.Todo{ID: int(id), UserId: int(userSigned.ID)}).Find(&deletedTodo)
+
 	if result.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"data": "Not found",
+		c.JSON(http.StatusForbidden, gin.H{
+			"data": "Forbidden to conduct this action",
 		})
 		return
 	}
