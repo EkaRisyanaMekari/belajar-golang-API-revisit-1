@@ -75,7 +75,20 @@ func HandleUpdateTodo(c *gin.Context) {
 		return
 	}
 
-	if id != int(userSigned.ID) {
+	updatedTodo := todo.Todo{}
+
+	result := Db.Where(&todo.Todo{ID: int(id)}).Find(&updatedTodo)
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"data": "Not found",
+		})
+		return
+	}
+
+	result = Db.Where(&todo.Todo{ID: int(id), UserId: int(userSigned.ID)}).Find(&updatedTodo)
+
+	if result.RowsAffected == 0 {
 		c.JSON(http.StatusForbidden, gin.H{
 			"data": "Forbidden to conduct this action",
 		})
@@ -102,7 +115,6 @@ func HandleUpdateTodo(c *gin.Context) {
 		return
 	}
 
-	updatedTodo := todo.Todo{}
 	updatedTodo.Title = todoInput.Title
 	updatedTodo.Description = todoInput.Description
 	updatedTodo.DueDate = todoInput.DueDate
