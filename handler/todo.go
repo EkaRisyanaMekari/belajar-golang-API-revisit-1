@@ -139,16 +139,11 @@ func HandleUpdateTodo(c *gin.Context) {
 
 }
 
-func HandleGetTodosByStatus(c *gin.Context) {
+func (handler *todoHandler) HandleGetTodosByStatus(c *gin.Context) {
 	userSigned, _ := c.MustGet("user").(user.User)
 	status := c.Query("status")
 
-	var todos []todo.Todo
-	if status == "" {
-		Db.Where(&todo.Todo{UserId: int(userSigned.ID)}).Find(&todos)
-	} else {
-		Db.Where(&todo.Todo{UserId: int(userSigned.ID)}).Find(&todos, "status = ?", status)
-	}
+	todos := handler.todoService.GetListByStatus(int(userSigned.ID), status)
 	c.JSON(http.StatusOK, gin.H{
 		"data": todos,
 	})
