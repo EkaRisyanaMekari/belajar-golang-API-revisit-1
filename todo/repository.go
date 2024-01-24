@@ -15,11 +15,6 @@ type Repository interface {
 	Delete(todo Todo) (Todo, error)
 	Update(todo Todo) (Todo, error)
 	UpdateStatus(todo Todo) (Todo, error)
-	// Update(todo TodoInput) (Todo, error)
-	// Delete() (Todo, error)
-	// GetList() ([]Todo, error)
-	// GetDetail() (Todo, error)
-	// UpdateStatus() (Todo, error)
 }
 
 type repository struct {

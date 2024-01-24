@@ -12,11 +12,6 @@ type Service interface {
 	CheckTodoOwnership(userId int, id int) bool
 	Update(todo Todo) (Todo, error)
 	UpdateStatus(todo Todo) (Todo, error)
-	// Update(todo TodoInput) (Todo, error)
-	// Delete() (Todo, error)
-	// GetList() ([]Todo, error)
-	// GetDetail() (Todo, error)
-	// UpdateStatus() (Todo, error)
 }
 
 type service struct {
