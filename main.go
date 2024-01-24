@@ -35,6 +35,10 @@ func main() {
 
 	handler.Db = db
 
+	todoRepository := todo.NewRepository(db)
+	todoService := todo.NewService(todoRepository)
+	todoHandler := handler.NewTodoHandler(todoService)
+
 	router := gin.Default()
 
 	v1 := router.Group("/v1")
@@ -42,7 +46,7 @@ func main() {
 	router.GET("/", handler.HandleRoot)
 	v1.POST("/signup", handler.Signup)
 	v1.POST("/signin", handler.Signin)
-	v1.POST("/todos", middleware.RequireAuth, handler.HandlePostTodo)
+	v1.POST("/todos", middleware.RequireAuth, todoHandler.HandlePostTodo)
 	v1.PUT("/todos", middleware.RequireAuth, handler.HandleUpdateTodo)
 	v1.PUT("/todos/update-status", middleware.RequireAuth, handler.HandleUpdateTodoStatus)
 	v1.GET("/todos", middleware.RequireAuth, handler.HandleGetTodosByStatus)

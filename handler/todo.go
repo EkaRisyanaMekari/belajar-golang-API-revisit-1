@@ -19,6 +19,14 @@ import (
 
 var Db *gorm.DB
 
+type todoHandler struct {
+	todoService todo.Service
+}
+
+func NewTodoHandler(todoService todo.Service) *todoHandler {
+	return &todoHandler{todoService}
+}
+
 func HandleRoot(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"name":    "Hello World",
@@ -26,7 +34,7 @@ func HandleRoot(c *gin.Context) {
 	})
 }
 
-func HandlePostTodo(c *gin.Context) {
+func (handler *todoHandler) HandlePostTodo(c *gin.Context) {
 	userSigned := c.MustGet("user").(user.User)
 	var todoInput todo.TodoInput
 
@@ -55,14 +63,14 @@ func HandlePostTodo(c *gin.Context) {
 	newTodo.Status = 0
 	newTodo.UserId = int(userSigned.ID)
 
-	err = Db.Create(&newTodo).Error
+	createdTodo, err := handler.todoService.Create(newTodo)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		fmt.Println(err)
 		log.Fatal("Error create record")
 	}
 
-	c.JSON(http.StatusOK, newTodo)
+	c.JSON(http.StatusOK, createdTodo)
 
 }
 
