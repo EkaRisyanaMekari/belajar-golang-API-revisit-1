@@ -8,6 +8,7 @@ type Repository interface {
 	Create(todo Todo) (Todo, error)
 	GetListAll(userId int) []Todo
 	GetListByStatus(userId int, status string) []Todo
+	GetFirst(userId int, id string) (Todo, *gorm.DB)
 	// Update(todo TodoInput) (Todo, error)
 	// Delete() (Todo, error)
 	// GetList() ([]Todo, error)
@@ -38,4 +39,10 @@ func (r *repository) GetListByStatus(userId int, status string) []Todo {
 	var todos []Todo
 	r.db.Where(&Todo{UserId: userId}).Find(&todos, "status = ?", status)
 	return todos
+}
+
+func (r *repository) GetFirst(userId int, id string) (Todo, *gorm.DB) {
+	var todo Todo
+	result := r.db.First(&todo, id)
+	return todo, result
 }

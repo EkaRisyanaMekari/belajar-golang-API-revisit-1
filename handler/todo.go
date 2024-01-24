@@ -150,12 +150,12 @@ func (handler *todoHandler) HandleGetTodosByStatus(c *gin.Context) {
 
 }
 
-func HandleGetTodoById(c *gin.Context) {
+func (handler *todoHandler) HandleGetTodoById(c *gin.Context) {
 	userSigned, _ := c.MustGet("user").(user.User)
 	id := c.Param("id")
 
-	var todo todo.Todo
-	result := Db.First(&todo, id)
+	todo, result := handler.todoService.GetTodoById(int(userSigned.ID), id)
+
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"data": "Not found",

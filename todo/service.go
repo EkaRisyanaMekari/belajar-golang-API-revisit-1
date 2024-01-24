@@ -1,8 +1,11 @@
 package todo
 
+import "gorm.io/gorm"
+
 type Service interface {
 	Create(todo Todo) (Todo, error)
 	GetListByStatus(userId int, status string) []Todo
+	GetTodoById(userId int, id string) (Todo, *gorm.DB)
 	// Update(todo TodoInput) (Todo, error)
 	// Delete() (Todo, error)
 	// GetList() ([]Todo, error)
@@ -31,4 +34,9 @@ func (s *service) GetListByStatus(userId int, status string) []Todo {
 		todos = s.repository.GetListByStatus(userId, status)
 	}
 	return todos
+}
+
+func (s *service) GetTodoById(userId int, id string) (Todo, *gorm.DB) {
+	todo, result := s.repository.GetFirst(userId, id)
+	return todo, result
 }
