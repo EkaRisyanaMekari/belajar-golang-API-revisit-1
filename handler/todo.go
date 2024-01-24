@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"belajar-golang-api-revisit-1/todo"
 	"belajar-golang-api-revisit-1/user"
@@ -174,7 +173,7 @@ func (handler *todoHandler) HandleGetTodoById(c *gin.Context) {
 	})
 }
 
-func HandleGetTodoBySearch(c *gin.Context) {
+func (handler *todoHandler) HandleGetTodoBySearch(c *gin.Context) {
 	userSigned, _ := c.MustGet("user").(user.User)
 	keyword := c.Query("keyword")
 
@@ -185,9 +184,7 @@ func HandleGetTodoBySearch(c *gin.Context) {
 		return
 	}
 
-	var todos []todo.Todo
-	conditions := []string{"%", keyword, "%"}
-	Db.Where("description like ?", strings.Join(conditions, "")).Where(&todo.Todo{UserId: int(userSigned.ID)}).Find(&todos)
+	todos := handler.todoService.GetListByKeyword(int(userSigned.ID), keyword)
 	c.JSON(http.StatusOK, gin.H{
 		"data": todos,
 	})

@@ -52,7 +52,7 @@ func main() {
 	v1.GET("/todos", middleware.RequireAuth, todoHandler.HandleGetTodosByStatus)
 	v1.GET("/todos/:id", middleware.RequireAuth, todoHandler.HandleGetTodoById)
 	v1.DELETE("/todos/:id", middleware.RequireAuth, handler.HandleDeleteTodoById)
-	v1.GET("/todos/search", middleware.RequireAuth, handler.HandleGetTodoBySearch)
+	v1.GET("/todos/search", middleware.RequireAuth, todoHandler.HandleGetTodoBySearch)
 
 	router.Run(":" + os.Getenv("PORT"))
 }
