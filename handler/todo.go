@@ -151,9 +151,9 @@ func (handler *todoHandler) HandleGetTodosByStatus(c *gin.Context) {
 
 func (handler *todoHandler) HandleGetTodoById(c *gin.Context) {
 	userSigned, _ := c.MustGet("user").(user.User)
-	id := c.Param("id")
+	id, _ := strconv.Atoi(c.Param("id"))
 
-	todo, result := handler.todoService.GetTodoById(int(userSigned.ID), id)
+	todo, result := handler.todoService.GetTodoById(0, id)
 
 	if result.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -190,7 +190,7 @@ func (handler *todoHandler) HandleGetTodoBySearch(c *gin.Context) {
 	})
 }
 
-func HandleDeleteTodoById(c *gin.Context) {
+func (handler *todoHandler) HandleDeleteTodoById(c *gin.Context) {
 	userSigned := c.MustGet("user").(user.User)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -200,25 +200,28 @@ func HandleDeleteTodoById(c *gin.Context) {
 
 	var deletedTodo = todo.Todo{}
 
-	result := Db.Where(&todo.Todo{ID: int(id)}).Find(&deletedTodo)
+	var isExist bool
+	isExist = handler.todoService.CheckTodoExistence(id)
 
-	if result.RowsAffected == 0 {
+	if !isExist {
 		c.JSON(http.StatusNotFound, gin.H{
 			"data": "Not found",
 		})
 		return
 	}
 
-	result = Db.Where(&todo.Todo{ID: int(id), UserId: int(userSigned.ID)}).Find(&deletedTodo)
+	isExist = handler.todoService.CheckTodoOwnership(int(userSigned.ID), id)
 
-	if result.RowsAffected == 0 {
+	if !isExist {
 		c.JSON(http.StatusForbidden, gin.H{
 			"data": "Forbidden to conduct this action",
 		})
 		return
 	}
 
-	err = Db.Delete(&deletedTodo).Error
+	deletedTodo, _ = handler.todoService.GetTodoById(int(userSigned.ID), id)
+	_, err = handler.todoService.Delete(deletedTodo)
+
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}

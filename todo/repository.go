@@ -10,8 +10,9 @@ type Repository interface {
 	Create(todo Todo) (Todo, error)
 	GetListAll(userId int) []Todo
 	GetListByStatus(userId int, status string) []Todo
-	GetFirst(userId int, id string) (Todo, *gorm.DB)
+	GetFirst(userId int, id int) (Todo, *gorm.DB)
 	GetListByKeyword(userId int, keyword string) []Todo
+	Delete(todo Todo) (Todo, error)
 	// Update(todo TodoInput) (Todo, error)
 	// Delete() (Todo, error)
 	// GetList() ([]Todo, error)
@@ -44,9 +45,14 @@ func (r *repository) GetListByStatus(userId int, status string) []Todo {
 	return todos
 }
 
-func (r *repository) GetFirst(userId int, id string) (Todo, *gorm.DB) {
+func (r *repository) GetFirst(userId int, id int) (Todo, *gorm.DB) {
 	var todo Todo
-	result := r.db.First(&todo, id)
+	var result *gorm.DB
+	if userId == 0 {
+		result = r.db.First(&todo, id)
+	} else {
+		result = r.db.First(&todo, Todo{ID: id, UserId: userId})
+	}
 	return todo, result
 }
 
@@ -55,4 +61,9 @@ func (r *repository) GetListByKeyword(userId int, keyword string) []Todo {
 	conditions := []string{"%", keyword, "%"}
 	r.db.Where("description like ?", strings.Join(conditions, "")).Where(&Todo{UserId: userId}).Find(&todos)
 	return todos
+}
+
+func (r *repository) Delete(todo Todo) (Todo, error) {
+	error := r.db.Delete(&todo).Error
+	return todo, error
 }
