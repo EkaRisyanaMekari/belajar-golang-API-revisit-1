@@ -10,6 +10,7 @@ type Service interface {
 	Delete(todo Todo) (Todo, error)
 	CheckTodoExistence(id int) bool
 	CheckTodoOwnership(userId int, id int) bool
+	Update(todo Todo) (Todo, error)
 	// Update(todo TodoInput) (Todo, error)
 	// Delete() (Todo, error)
 	// GetList() ([]Todo, error)
@@ -64,4 +65,10 @@ func (s *service) CheckTodoExistence(id int) bool {
 func (s *service) CheckTodoOwnership(userId int, id int) bool {
 	_, result := s.repository.GetFirst(userId, id)
 	return result.RowsAffected > 0
+}
+
+func (s *service) Update(todo Todo) (Todo, error) {
+	var updatedTodo Todo
+	updatedTodo, error := s.repository.Update(todo)
+	return updatedTodo, error
 }

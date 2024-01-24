@@ -73,7 +73,7 @@ func (handler *todoHandler) HandlePostTodo(c *gin.Context) {
 
 }
 
-func HandleUpdateTodo(c *gin.Context) {
+func (handler *todoHandler) HandleUpdateTodo(c *gin.Context) {
 	userSigned := c.MustGet("user").(user.User)
 
 	id, err := strconv.Atoi(c.Query("id"))
@@ -84,24 +84,26 @@ func HandleUpdateTodo(c *gin.Context) {
 
 	updatedTodo := todo.Todo{}
 
-	result := Db.Where(&todo.Todo{ID: int(id)}).Find(&updatedTodo)
+	var isExist bool
+	isExist = handler.todoService.CheckTodoExistence(id)
 
-	if result.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
+	if !isExist {
+		c.JSON(http.StatusNotFound, gin.H{
 			"data": "Not found",
 		})
 		return
 	}
 
-	result = Db.Where(&todo.Todo{ID: int(id), UserId: int(userSigned.ID)}).Find(&updatedTodo)
+	isExist = handler.todoService.CheckTodoOwnership(int(userSigned.ID), id)
 
-	if result.RowsAffected == 0 {
+	if !isExist {
 		c.JSON(http.StatusForbidden, gin.H{
 			"data": "Forbidden to conduct this action",
 		})
 		return
 	}
 
+	updatedTodo, _ = handler.todoService.GetTodoById(int(userSigned.ID), id)
 	var todoInput todo.TodoInput
 
 	err = c.ShouldBindJSON(&todoInput)
@@ -127,7 +129,7 @@ func HandleUpdateTodo(c *gin.Context) {
 	updatedTodo.DueDate = todoInput.DueDate
 	updatedTodo.ID = id
 
-	err = Db.Model(&updatedTodo).Select("Title", "Description", "DueDate").Updates(updatedTodo).Error
+	_, err = handler.todoService.Update(updatedTodo)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		fmt.Println(err)

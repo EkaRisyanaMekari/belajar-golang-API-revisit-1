@@ -13,6 +13,7 @@ type Repository interface {
 	GetFirst(userId int, id int) (Todo, *gorm.DB)
 	GetListByKeyword(userId int, keyword string) []Todo
 	Delete(todo Todo) (Todo, error)
+	Update(todo Todo) (Todo, error)
 	// Update(todo TodoInput) (Todo, error)
 	// Delete() (Todo, error)
 	// GetList() ([]Todo, error)
@@ -65,5 +66,10 @@ func (r *repository) GetListByKeyword(userId int, keyword string) []Todo {
 
 func (r *repository) Delete(todo Todo) (Todo, error) {
 	error := r.db.Delete(&todo).Error
+	return todo, error
+}
+
+func (r *repository) Update(todo Todo) (Todo, error) {
+	error := r.db.Model(&todo).Select("Title", "Description", "DueDate").Updates(todo).Error
 	return todo, error
 }
