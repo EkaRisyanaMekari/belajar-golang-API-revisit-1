@@ -23,7 +23,7 @@ func (s *service) Create(todo Todo) (Todo, error) {
 	return newTodo, err
 }
 
-func (s *service) GetListAll(userId int, status string) []Todo {
+func (s *service) GetListByStatus(userId int, status string) []Todo {
 	var todos []Todo
 	if status == "" {
 		todos = s.repository.GetListAll(userId)
