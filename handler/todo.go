@@ -233,7 +233,7 @@ func (handler *todoHandler) HandleDeleteTodoById(c *gin.Context) {
 	})
 }
 
-func HandleUpdateTodoStatus(c *gin.Context) {
+func (handler *todoHandler) HandleUpdateTodoStatus(c *gin.Context) {
 	userSigned := c.MustGet("user").(user.User)
 	id, err := strconv.Atoi(c.Query("id"))
 
@@ -244,11 +244,21 @@ func HandleUpdateTodoStatus(c *gin.Context) {
 
 	updatedTodo := todo.Todo{}
 
-	result := Db.Where(&todo.Todo{ID: int(id), UserId: int(userSigned.ID)}).Find(&updatedTodo)
+	var isExist bool
+	isExist = handler.todoService.CheckTodoExistence(id)
 
-	if result.RowsAffected == 0 {
+	if !isExist {
 		c.JSON(http.StatusNotFound, gin.H{
-			"data": "No data updated",
+			"data": "Not found",
+		})
+		return
+	}
+
+	isExist = handler.todoService.CheckTodoOwnership(int(userSigned.ID), id)
+
+	if !isExist {
+		c.JSON(http.StatusForbidden, gin.H{
+			"data": "Forbidden to conduct this action",
 		})
 		return
 	}
@@ -261,9 +271,11 @@ func HandleUpdateTodoStatus(c *gin.Context) {
 		return
 	}
 
+	updatedTodo, _ = handler.todoService.GetTodoById(int(userSigned.ID), id)
 	updatedTodo.Status = todoStatus.Status
 
-	errorUpdate := Db.Model(&updatedTodo).Select("Status").Updates(updatedTodo).Error
+	// errorUpdate := Db.Model(&updatedTodo).Select("Status").Updates(updatedTodo).Error
+	_, errorUpdate := handler.todoService.UpdateStatus(updatedTodo)
 
 	if errorUpdate != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

@@ -11,6 +11,7 @@ type Service interface {
 	CheckTodoExistence(id int) bool
 	CheckTodoOwnership(userId int, id int) bool
 	Update(todo Todo) (Todo, error)
+	UpdateStatus(todo Todo) (Todo, error)
 	// Update(todo TodoInput) (Todo, error)
 	// Delete() (Todo, error)
 	// GetList() ([]Todo, error)
@@ -70,5 +71,11 @@ func (s *service) CheckTodoOwnership(userId int, id int) bool {
 func (s *service) Update(todo Todo) (Todo, error) {
 	var updatedTodo Todo
 	updatedTodo, error := s.repository.Update(todo)
+	return updatedTodo, error
+}
+
+func (s *service) UpdateStatus(todo Todo) (Todo, error) {
+	var updatedTodo Todo
+	updatedTodo, error := s.repository.UpdateStatus(todo)
 	return updatedTodo, error
 }
