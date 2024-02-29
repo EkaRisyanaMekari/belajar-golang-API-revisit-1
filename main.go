@@ -25,8 +25,6 @@ func main() {
 	}
 	
 	dsn := os.Getenv("DATABASE")
-	fmt.Println("dsn = ")
-	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
