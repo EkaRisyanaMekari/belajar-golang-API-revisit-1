@@ -47,7 +47,7 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"https://learn-typescript-vue3.vercel.app/"},
 		AllowMethods:     []string{"PUT", "PATCH", "GET", "DELETE"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
