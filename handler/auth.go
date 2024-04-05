@@ -111,7 +111,7 @@ func Signin(c *gin.Context) {
 
 	// set cookie
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("token", tokenString, 3600*24, "", "", false, true)
+	c.SetCookie("token", tokenString, 3600*24, "", "", true, false)
 
 	// respond with token
 	c.JSON(http.StatusOK, gin.H{
