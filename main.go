@@ -21,11 +21,11 @@ func main() {
 	// only load the .env file when running locally
 	// check for a RAILWAY_ENVIRONMENT, if not found, code is running locally
 	if _, exists := os.LookupEnv("RAILWAY_ENVIRONMENT"); exists == false {
-	    if err := godotenv.Load(); err != nil {
-	        log.Fatal("error loading .env file:", err)
-	    }
+		if err := godotenv.Load(); err != nil {
+			log.Fatal("error loading .env file:", err)
+		}
 	}
-	
+
 	dsn := os.Getenv("DATABASE")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -47,7 +47,7 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"PUT", "POST", "GET", "DELETE"},
 		AllowHeaders:     []string{"*"},
 		ExposeHeaders:    []string{"*"},
