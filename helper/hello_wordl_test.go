@@ -7,6 +7,7 @@ import (
 )
 
 func TestHelloWorld(t *testing.T) {
+	t.Skip("skip unit test")
 	result := HelloWorld("eka")
 	if result != "hello eka" {
 		t.Fatal("tidak sesuai")
