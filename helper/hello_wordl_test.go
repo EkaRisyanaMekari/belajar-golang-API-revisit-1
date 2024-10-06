@@ -20,6 +20,17 @@ func TestHelloWorldAssert(t *testing.T) {
 	assert.Equal(t, "hello eka", result)
 }
 
+func TestHelloWorldMulti(t *testing.T) {
+	t.Run("Case1", func(t *testing.T) {
+		result := HelloWorld("eka")
+		assert.Equal(t, "hello eka", result)
+	})
+	t.Run("Case2", func(t *testing.T) {
+		result := HelloWorld("joko")
+		assert.Equal(t, "hello joko", result)
+	})
+}
+
 func TestMain(m *testing.M) {
 	fmt.Println("before test")
 	m.Run()
