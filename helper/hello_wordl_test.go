@@ -67,6 +67,18 @@ func BenchmarkHelloWorld(b *testing.B) {
 		HelloWorld("Eka")
 	}
 }
+func BenchmarkHelloWorldMulti(b *testing.B) {
+	b.Run("Benchmark1", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			HelloWorld("Eka")
+		}
+	})
+	b.Run("Benchmark2", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			HelloWorld("Risyana")
+		}
+	})
+}
 
 func TestMain(m *testing.M) {
 	fmt.Println("before test")
