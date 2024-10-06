@@ -80,6 +80,32 @@ func BenchmarkHelloWorldMulti(b *testing.B) {
 	})
 }
 
+func BenchmarkTestTableHelloWorld(b *testing.B) {
+	lists := []struct {
+		name  string
+		param string
+	}{
+		{
+			name:  "Eka",
+			param: "Eka",
+		},
+		{
+			name:  "Risyana",
+			param: "Risyana",
+		},
+		{
+			name:  "Pribadi",
+			param: "Pribadi",
+		},
+	}
+
+	for _, list := range lists {
+		b.Run(list.name, func(b *testing.B) {
+			HelloWorld(list.param)
+		})
+	}
+}
+
 func TestMain(m *testing.M) {
 	fmt.Println("before test")
 	m.Run()
