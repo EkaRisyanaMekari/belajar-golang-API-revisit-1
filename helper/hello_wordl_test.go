@@ -31,6 +31,37 @@ func TestHelloWorldMulti(t *testing.T) {
 	})
 }
 
+func TestTableHelloWorld(t *testing.T) {
+	lists := []struct {
+		name     string
+		param    string
+		expected string
+	}{
+		{
+			name:     "Eka",
+			param:    "Eka",
+			expected: "hello Eka",
+		},
+		{
+			name:     "Risyana",
+			param:    "Risyana",
+			expected: "hello Risyana",
+		},
+		{
+			name:     "Pribadi",
+			param:    "Pribadi",
+			expected: "hello Pribadi",
+		},
+	}
+
+	for _, list := range lists {
+		t.Run(list.name, func(t *testing.T) {
+			result := HelloWorld(list.param)
+			assert.Equal(t, list.expected, result)
+		})
+	}
+}
+
 func TestMain(m *testing.M) {
 	fmt.Println("before test")
 	m.Run()
